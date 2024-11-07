@@ -37,8 +37,8 @@
 
         <!-- 기본 이미지로 변경 버튼 -->
         <div class="mb-3">
-            <button type="button" class="btn btn-warning" onclick="setDefaultImage('${user.userId}')">기본 이미지로 변경</button>
-            
+            <button type="button" class="btn btn-warning"
+                    th:onclick="'setDefaultImage(' + ${user.userId} + ')'">기본 이미지로 변경</button>
         </div>
 
         <div class="mb-3">
