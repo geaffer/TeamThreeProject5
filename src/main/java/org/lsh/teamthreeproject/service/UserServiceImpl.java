@@ -174,11 +174,29 @@ public class UserServiceImpl implements UserService {
         // 사용자 조회
         User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다"));
 
-        // 프로필 이미지 경로를 기본 이미지로 변경
-        user.setProfileImage("/upload/noImage.jpg");
+        // 기본 이미지 파일 경로와 업로드 경로 설정
+        Path defaultImagePath = Paths.get("src/main/resources/static/images/noImage.jpg"); // 기본 이미지 위치
+        Path uploadDir = Paths.get("c:/upload");
+        Path uploadImagePath = uploadDir.resolve("noImage.jpg"); // 업로드 폴더에 저장될 경로
 
-        // DB에 저장된 사용자 정보 업데이트
-        userRepository.save(user);
+        try {
+            // 업로드 폴더가 없으면 생성
+            if (!Files.exists(uploadDir)) {
+                Files.createDirectories(uploadDir);
+            }
+
+            // 기본 이미지를 upload 폴더로 복사
+            Files.copy(defaultImagePath, uploadImagePath, StandardCopyOption.REPLACE_EXISTING);
+
+            // 사용자 프로필 이미지를 기본 이미지 경로로 업데이트
+            user.setProfileImage("/upload/noImage.jpg");
+
+            // DB에 저장된 사용자 정보 업데이트
+            userRepository.save(user);
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new RuntimeException("기본 이미지 복사 중 에러 발생", e);
+        }
     }
 
 
